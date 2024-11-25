@@ -1,0 +1,21 @@
+// bohp.param.def
+
+DEF_PARAM(bohp_on                        , BOHP_ON                        , Flag   , Flag      ,TRUE       ,      )
+DEF_PARAM(bohp_ul1_on                    , BOHP_UL1_ON                    , Flag   , Flag      ,TRUE       ,      )
+DEF_PARAM(bohp_umlc_on                   , BOHP_UMLC_ON                   , Flag   , Flag      ,TRUE       ,      )
+
+DEF_PARAM(bohp_block_size                , BOHP_BLOCK_SIZE                , uns    , uns       ,64          ,      ) // Default: 64 bytes
+DEF_PARAM(bohp_blocks_in_page            , BOHP_BLOCKS_IN_PAGE            , uns    , uns       ,64          ,      ) // Default: 64 blocks
+DEF_PARAM(bohp_recent_req_table_size     , BOHP_RECENT_REQ_TABLE_SIZE     , uns    , uns       ,256         ,      ) // Default: 256 entries
+DEF_PARAM(bohp_learn_table_size          , BOHP_LEARN_TABLE_SIZE          , uns    , uns       ,256         ,      ) // Default: 256 entries
+DEF_PARAM(bohp_offset_list_size          , BOHP_OFFSET_LIST_SIZE          , uns    , uns       ,52          ,      ) // Default: 52 offsets
+DEF_PARAM(bohp_learning_rounds           , BOHP_LEARNING_ROUNDS           , uns    , uns       ,100         ,      ) // Default: 100 rounds
+DEF_PARAM(bohp_max_score                 , BOHP_MAX_SCORE                 , uns    , uns       ,31          ,      ) // Default: 31
+DEF_PARAM(bohp_min_score                 , BOHP_MIN_SCORE                 , uns    , uns       ,1           ,      ) // Default: 1
+DEF_PARAM(bohp_min_latency               , BOHP_MIN_LATENCY               , uns    , uns       ,11          ,      ) // Default: 11 cycles
+DEF_PARAM(bohp_relearn_interval          , BOHP_RELEARN_INTERVAL          , uns    , uns       ,100         ,      ) // Default: 100 cycles
+
+DEF_PARAM(bohp_acc_thresh_1              , BOHP_ACC_THRESH_1              , uns    , uns       ,1           ,      )
+DEF_PARAM(bohp_acc_thresh_2              , BOHP_ACC_THRESH_2              , uns    , uns       ,100         ,      )
+
+DEF_PARAM(bohp_throttle_on               , BOHP_THROTTLE_ON               , Flag   , Flag      ,TRUE        ,      )

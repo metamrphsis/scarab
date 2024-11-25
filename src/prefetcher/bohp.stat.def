@@ -1,0 +1,44 @@
+// bohp.stat.def
+
+DEF_STAT(BOHP_BEST_OFFSET_LEARNING_INITIALIZED    , COUNT,     NO_RATIO) // Initialization of Best Offset Learning
+DEF_STAT(BOHP_RECENT_REQUESTS_TABLE_INITIALIZED   , COUNT,     NO_RATIO) // Initialization of Recent Requests Table
+DEF_STAT(BOHP_RECENT_REQUEST_INSERTED             , COUNT,     NO_RATIO) // Insertion into Recent Requests Table
+DEF_STAT(BOHP_RECENT_REQUEST_FOUND                , COUNT,     NO_RATIO) // Recent Request Found
+DEF_STAT(BOHP_RECENT_REQUEST_NOT_FOUND            , COUNT,     NO_RATIO) // Recent Request Not Found
+
+DEF_STAT(BOHP_PREFETCHER_INITIALIZED              , COUNT,     NO_RATIO) // BOHP Prefetcher Initialized
+DEF_STAT(BOHP_CORE_INITIALIZED                    , COUNT,     NO_RATIO) // BOHP Core Initialized
+
+DEF_STAT(BOHP_STREAM_BUFFER_HIT                   , COUNT,     NO_RATIO) // Stream Buffer Hit
+DEF_STAT(BOHP_STREAM_BUFFER_REPLACED              , COUNT,     NO_RATIO) // Stream Buffer Replaced
+DEF_STAT(BOHP_STREAM_BUFFER_CREATED               , COUNT,     NO_RATIO) // Stream Buffer Created
+DEF_STAT(BOHP_STREAM_TRAINED                      , COUNT,     NO_RATIO) // Stream Successfully Trained
+DEF_STAT(BOHP_STREAM_TRAINING_FAILED              , COUNT,     NO_RATIO) // Stream Training Failed
+
+DEF_STAT(BOHP_PREFETCH_USEFUL                    , COUNT,     NO_RATIO) // Prefetch was useful
+DEF_STAT(BOHP_PREFETCH_NOT_USEFUL                , COUNT,     NO_RATIO) // Prefetch was not useful
+DEF_STAT(BOHP_PREFETCH_ISSUED                    , COUNT,     NO_RATIO) // Prefetch Issued
+DEF_STAT(BOHP_PREFETCH_REQUEST_ENQUEUED           , COUNT,     NO_RATIO) // Prefetch Request Enqueued
+DEF_STAT(BOHP_PREFETCH_QUEUE_FULL                 , COUNT,     NO_RATIO) // Prefetch Queue Full
+DEF_STAT(BOHP_PREFETCH_QUEUE_STALL                , COUNT,     NO_RATIO) // Prefetcher Stall due to Full Queue
+DEF_STAT(BOHP_PREFETCH_HIT                        , COUNT,     NO_RATIO) // Prefetch Hit
+DEF_STAT(BOHP_PREFETCH_MISS                       , COUNT,     NO_RATIO) // Prefetch Miss
+
+DEF_STAT(BOHP_OFFSET_SCORE_UPDATED                , COUNT,     NO_RATIO) // Offset Score Updated
+DEF_STAT(BOHP_LOCAL_BEST_OFFSET_UPDATED           , COUNT,     NO_RATIO) // Local Best Offset Updated
+DEF_STAT(BOHP_LEARNING_ROUND_COMPLETED            , COUNT,     NO_RATIO) // Learning Round Completed
+DEF_STAT(BOHP_BEST_OFFSET_UPDATED                  , COUNT,     NO_RATIO) // Best Offset Updated
+DEF_STAT(BOHP_PREFETCH_DISABLED                    , COUNT,     NO_RATIO) // Prefetching Disabled
+
+DEF_STAT(BOHP_THROTTLE_UP                          , COUNT,     NO_RATIO) // Throttling Prefetcher Up
+DEF_STAT(BOHP_THROTTLE_DOWN                        , COUNT,     NO_RATIO) // Throttling Prefetcher Down
+
+DEF_STAT(BOHP_UL1_CACHE_MISS_HANDLED               , COUNT,     NO_RATIO) // UL1 Cache Miss Handled
+DEF_STAT(BOHP_UL1_CACHE_HIT_HANDLED                , COUNT,     NO_RATIO) // UL1 Cache Hit Handled
+DEF_STAT(BOHP_UMLC_CACHE_MISS_HANDLED              , COUNT,     NO_RATIO) // UMLC Cache Miss Handled
+DEF_STAT(BOHP_UMLC_CACHE_HIT_HANDLED               , COUNT,     NO_RATIO) // UMLC Cache Hit Handled
+
+DEF_STAT(BOHP_NEW_BEST_OFFSET                       , COUNT,     NO_RATIO) // New Best Offset Selected
+DEF_STAT(BOHP_BEST_SCORE_UPDATED                    , COUNT,     NO_RATIO) // Best Score Updated
+DEF_STAT(BOHP_OFFSET_SCORE_DECREMENTED              , COUNT,     NO_RATIO) // Offset Score Decremented
+DEF_STAT(BOHP_REDUNDANT_STREAM_REMOVED              , COUNT,     NO_RATIO) // Redundant Stream Removed
