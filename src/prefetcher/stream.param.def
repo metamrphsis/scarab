@@ -82,7 +82,8 @@ DEF_PARAM(stream_pref_into_dcache           , STREAM_PREF_INTO_DCACHE        , F
 
 DEF_PARAM(remove_redundant_stream           , REMOVE_REDUNDANT_STREAM        , Flag   , Flag      ,FALSE     ,      ) // remove redundat stream 
 
-
+DEF_PARAM(best_offset_prefetcher_on         , BEST_OFFSET_PREFETCHER_ON      , Flag   , Flag      ,FALSE     ,      )
+DEF_PARAM(best_offset_round_count           , BEST_OFFSET_ROUND_COUNT        , uns    , uns       ,100       ,      )
 
      // DEF_PARAM(l2hit_stream_pref_on              , L2HIT_STREAM_PREF_ON           , Flag   , Flag      ,FALSE     ,      ) // l0 prefetcher request 
 DEF_PARAM(l2hit_stream_schedule_num         , L2HIT_STREAM_SCHEDULE_NUM      , uns    , uns       ,4         ,      )  // l0 prefetcher request number per cycle 
@@ -104,4 +105,4 @@ DEF_PARAM(l2hit_l2access_req_q_size         , L2HIT_L2ACCESS_REQ_Q_SIZE      , u
 
 DEF_PARAM(pref_stream_accperstream          , PREF_STREAM_ACCPERSTREAM       , Flag    , Flag     ,FALSE     ,      )
 
-DEF_PARAM(pref_acc_distance_10              , PREF_ACC_DISTANCE_10           , uns    , uns       , 128     ,     ) 
+DEF_PARAM(pref_acc_distance_10              , PREF_ACC_DISTANCE_10           , uns    , uns       , 128     ,     )

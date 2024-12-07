@@ -6,7 +6,7 @@
 #include "globals/global_types.h"
 
 #define DEF_PARAM(name, variable, type, func, def, const) \
-    extern const type variable;
+  extern const type variable;
 #include "bohp.param.def"
 #undef DEF_PARAM
 

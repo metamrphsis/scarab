@@ -29,6 +29,7 @@ DEF_STAT(BOHP_LOCAL_BEST_OFFSET_UPDATED           , COUNT,     NO_RATIO) // Loca
 DEF_STAT(BOHP_LEARNING_ROUND_COMPLETED            , COUNT,     NO_RATIO) // Learning Round Completed
 DEF_STAT(BOHP_BEST_OFFSET_UPDATED                  , COUNT,     NO_RATIO) // Best Offset Updated
 DEF_STAT(BOHP_PREFETCH_DISABLED                    , COUNT,     NO_RATIO) // Prefetching Disabled
+DEF_STAT(BOHP_PREFETCHER_DISABLED               , COUNT,     NO_RATIO) // Prefetching Disabled
 
 DEF_STAT(BOHP_THROTTLE_UP                          , COUNT,     NO_RATIO) // Throttling Prefetcher Up
 DEF_STAT(BOHP_THROTTLE_DOWN                        , COUNT,     NO_RATIO) // Throttling Prefetcher Down

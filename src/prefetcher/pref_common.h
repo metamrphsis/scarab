@@ -168,10 +168,7 @@ typedef struct HWP_Common_struct {
   uns phase;
 } HWP_Common;
 
-typedef enum {
-  UMLC,
-  UL1
-} CacheLevel;
+typedef enum { UMLC, UL1 } CacheLevel;
 
 /**************************************************************/
 /* Framework interface */

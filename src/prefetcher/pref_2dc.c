@@ -65,8 +65,9 @@
    cache.
 */
 /*
- * This prefetcher is implemented in a unified way where all cores share the same prefetcher instance.
- * As a result, the proc_id received as a parameter is ignored.
+ * This prefetcher is implemented in a unified way where all cores share the
+ * same prefetcher instance. As a result, the proc_id received as a parameter is
+ * ignored.
  */
 /**************************************************************************************/
 /* Macros */
@@ -78,25 +79,23 @@ void pref_2dc_init(HWP* hwp) {
   if(!PREF_2DC_ON)
     return;
 
-  if(PREF_UMLC_ON){
-    tdc_prefetcher_array.tdc_hwp_umlc        = (Pref_2DC*)malloc(sizeof(Pref_2DC));
-    tdc_prefetcher_array.tdc_hwp_umlc->type  = UMLC;
+  if(PREF_UMLC_ON) {
+    tdc_prefetcher_array.tdc_hwp_umlc = (Pref_2DC*)malloc(sizeof(Pref_2DC));
+    tdc_prefetcher_array.tdc_hwp_umlc->type = UMLC;
     init_2dc(hwp, tdc_prefetcher_array.tdc_hwp_umlc);
   }
-  if(PREF_UL1_ON){
-    tdc_prefetcher_array.tdc_hwp_ul1         = (Pref_2DC*)malloc(sizeof(Pref_2DC));
-    tdc_prefetcher_array.tdc_hwp_ul1->type  = UL1;
+  if(PREF_UL1_ON) {
+    tdc_prefetcher_array.tdc_hwp_ul1 = (Pref_2DC*)malloc(sizeof(Pref_2DC));
+    tdc_prefetcher_array.tdc_hwp_ul1->type = UL1;
     init_2dc(hwp, tdc_prefetcher_array.tdc_hwp_ul1);
   }
-
 }
-void init_2dc(HWP* hwp, Pref_2DC* tdc_hwp_core){
-
+void init_2dc(HWP* hwp, Pref_2DC* tdc_hwp_core) {
   tdc_hwp_core->hwp_info          = hwp->hwp_info;
   tdc_hwp_core->hwp_info->enabled = TRUE;
 
   tdc_hwp_core->regions = (Pref_2DC_Region*)calloc(PREF_2DC_NUM_REGIONS,
-                                              sizeof(Pref_2DC_Region));
+                                                   sizeof(Pref_2DC_Region));
 
   tdc_hwp_core->last_access = 0;
   tdc_hwp_core->last_loadPC = 0;
@@ -111,24 +110,29 @@ void init_2dc(HWP* hwp, Pref_2DC* tdc_hwp_core){
 }
 void pref_2dc_ul1_prefhit(uns8 proc_id, Addr lineAddr, Addr loadPC,
                           uns32 global_hist) {
-  pref_2dc_train(tdc_prefetcher_array.tdc_hwp_ul1, lineAddr, loadPC, TRUE);  // FIXME
+  pref_2dc_train(tdc_prefetcher_array.tdc_hwp_ul1, lineAddr, loadPC,
+                 TRUE);  // FIXME
 }
 
 void pref_2dc_ul1_miss(uns8 proc_id, Addr lineAddr, Addr loadPC,
                        uns32 global_histC) {
-  pref_2dc_train(tdc_prefetcher_array.tdc_hwp_ul1, lineAddr, loadPC, FALSE);  // FIXME
+  pref_2dc_train(tdc_prefetcher_array.tdc_hwp_ul1, lineAddr, loadPC,
+                 FALSE);  // FIXME
 }
 void pref_2dc_umlc_prefhit(uns8 proc_id, Addr lineAddr, Addr loadPC,
-                          uns32 global_hist) {
-  pref_2dc_train(tdc_prefetcher_array.tdc_hwp_umlc, lineAddr, loadPC, TRUE);  // FIXME
+                           uns32 global_hist) {
+  pref_2dc_train(tdc_prefetcher_array.tdc_hwp_umlc, lineAddr, loadPC,
+                 TRUE);  // FIXME
 }
 
 void pref_2dc_umlc_miss(uns8 proc_id, Addr lineAddr, Addr loadPC,
-                       uns32 global_histC) {
-  pref_2dc_train(tdc_prefetcher_array.tdc_hwp_umlc, lineAddr, loadPC, FALSE);  // FIXME
+                        uns32 global_histC) {
+  pref_2dc_train(tdc_prefetcher_array.tdc_hwp_umlc, lineAddr, loadPC,
+                 FALSE);  // FIXME
 }
 
-void pref_2dc_train(Pref_2DC* tdc_hwp, Addr lineAddr, Addr loadPC, Flag is_hit) {
+void pref_2dc_train(Pref_2DC* tdc_hwp, Addr lineAddr, Addr loadPC,
+                    Flag is_hit) {
   int              delta;
   Addr             hash;
   Addr             lineIndex = lineAddr >> LOG2(DCACHE_LINE_SIZE);
@@ -185,9 +189,11 @@ void pref_2dc_train(Pref_2DC* tdc_hwp, Addr lineAddr, Addr loadPC, Flag is_hit) 
       // few.
       for(; num_pref_sent < tdc_hwp->pref_degree; num_pref_sent++) {
         lineIndex += region->deltaA;
-        if(tdc_hwp->type == UMLC)pref_addto_umlc_req_queue(0, lineIndex, tdc_hwp->hwp_info->id);
-        else pref_addto_ul1req_queue_set(0, lineIndex, tdc_hwp->hwp_info->id, 0,
-                                    loadPC, 0, FALSE);  // FIXME
+        if(tdc_hwp->type == UMLC)
+          pref_addto_umlc_req_queue(0, lineIndex, tdc_hwp->hwp_info->id);
+        else
+          pref_addto_ul1req_queue_set(0, lineIndex, tdc_hwp->hwp_info->id, 0,
+                                      loadPC, 0, FALSE);  // FIXME
       }
     }
     while(num_pref_sent < tdc_hwp->pref_degree) {
@@ -201,8 +207,10 @@ void pref_2dc_train(Pref_2DC* tdc_hwp, Addr lineAddr, Addr loadPC, Flag is_hit) 
       delta1 = delta2;
       delta2 = data->delta;
 
-      if(tdc_hwp->type == UMLC)pref_addto_umlc_req_queue(0, lineIndex, tdc_hwp->hwp_info->id);
-      else pref_addto_ul1req_queue_set(0, lineIndex, tdc_hwp->hwp_info->id, 0,
+      if(tdc_hwp->type == UMLC)
+        pref_addto_umlc_req_queue(0, lineIndex, tdc_hwp->hwp_info->id);
+      else
+        pref_addto_ul1req_queue_set(0, lineIndex, tdc_hwp->hwp_info->id, 0,
                                     loadPC, 0, FALSE);  // FIXME
       num_pref_sent++;
     }
@@ -273,7 +281,8 @@ void pref_2dc_throttle(Pref_2DC* tdc_hwp) {
   }
 }
 
-Addr pref_2dc_hash(Pref_2DC* tdc_hwp, Addr lineIndex, Addr loadPC, int deltaA, int deltaB) {
+Addr pref_2dc_hash(Pref_2DC* tdc_hwp, Addr lineIndex, Addr loadPC, int deltaA,
+                   int deltaB) {
   Addr res = 0;
   uns  cache_indexbitsA;
   uns  cache_indexbitsB;

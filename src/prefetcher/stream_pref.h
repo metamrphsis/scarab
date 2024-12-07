@@ -50,6 +50,21 @@ typedef struct Stream_HWP_Struct {
   Pref_Mem_Req* l2hit_l2send_req_queue;
 } Stream_HWP;
 
+typedef struct Best_Offset_Prefetcher_Struct {
+  int current_offset;
+  int scores[52];
+  int rr_table[256];
+  int rr_tags[256];
+  int best_score;
+  int best_offset;
+  int round_count;
+} Best_Offset_Prefetcher;
+
+void init_best_offset_prefetcher(struct HWP_struct* hwp);  // Update the
+                                                           // declaration
+void update_best_offset_prefetcher(Best_Offset_Prefetcher* bop, Addr line_addr);
+void best_offset_prefetch(Best_Offset_Prefetcher* bop, Addr line_addr);
+
 void stream_dl0_miss(Addr line_addr);
 void stream_ul1_miss(Mem_Req* req);
 void update_pref_queue(void);

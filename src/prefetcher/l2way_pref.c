@@ -268,6 +268,6 @@ void update_l2way_pref_req_queue(void) {
         }
 
       }  // if timer is setted
-    }    // if valid
-  }      // end for
+    }  // if valid
+  }  // end for
 }

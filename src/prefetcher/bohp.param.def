@@ -19,3 +19,5 @@ DEF_PARAM(bohp_acc_thresh_1              , BOHP_ACC_THRESH_1              , uns 
 DEF_PARAM(bohp_acc_thresh_2              , BOHP_ACC_THRESH_2              , uns    , uns       ,100         ,      )
 
 DEF_PARAM(bohp_throttle_on               , BOHP_THROTTLE_ON               , Flag   , Flag      ,TRUE        ,      )
+
+DEF_PARAM(bohp_debug_mode               , BOHP_DEBUG_MODE               , Flag   , Flag      ,FALSE      ,      ) // Added for configurable debug mode

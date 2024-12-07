@@ -55,8 +55,9 @@
    Divides memory in regions and then does multi-stride prefetching
 */
 /*
- * This prefetcher is implemented in a unified way where all cores share the same prefetcher instance.
- * As a result, the proc_id received as a parameter is ignored.
+ * This prefetcher is implemented in a unified way where all cores share the
+ * same prefetcher instance. As a result, the proc_id received as a parameter is
+ * ignored.
  */
 /**************************************************************************************/
 /* Macros */
@@ -71,22 +72,22 @@ void pref_stride_init(HWP* hwp) {
   ASSERTM(0, PREF_REPORT_PREF_MATCH_AS_HIT || PREF_REPORT_PREF_MATCH_AS_MISS,
           "Stride prefetcher must train on demands matching prefetch request "
           "buffers\n");
-  
-  if(PREF_UMLC_ON){
-    stride_prefetche_array.stride_hwp_umlc              = (Pref_Stride*)malloc(sizeof(Pref_Stride));
-    stride_prefetche_array.stride_hwp_umlc->type        = UMLC;
+
+  if(PREF_UMLC_ON) {
+    stride_prefetche_array.stride_hwp_umlc = (Pref_Stride*)malloc(
+      sizeof(Pref_Stride));
+    stride_prefetche_array.stride_hwp_umlc->type = UMLC;
     init_stride(hwp, stride_prefetche_array.stride_hwp_umlc);
   }
-  if(PREF_UL1_ON){
-    stride_prefetche_array.stride_hwp_ul1               = (Pref_Stride*)malloc(sizeof(Pref_Stride));
-    stride_prefetche_array.stride_hwp_ul1->type         = UL1;
+  if(PREF_UL1_ON) {
+    stride_prefetche_array.stride_hwp_ul1 = (Pref_Stride*)malloc(
+      sizeof(Pref_Stride));
+    stride_prefetche_array.stride_hwp_ul1->type = UL1;
     init_stride(hwp, stride_prefetche_array.stride_hwp_ul1);
   }
-
-
 }
 
-void init_stride(HWP* hwp, Pref_Stride* stride_hwp){
+void init_stride(HWP* hwp, Pref_Stride* stride_hwp) {
   stride_hwp->hwp_info     = hwp->hwp_info;
   hwp->hwp_info->enabled   = TRUE;
   stride_hwp->region_table = (Stride_Region_Table_Entry*)calloc(
@@ -96,23 +97,28 @@ void init_stride(HWP* hwp, Pref_Stride* stride_hwp){
 }
 void pref_stride_ul1_hit(uns8 proc_id, Addr lineAddr, Addr loadPC,
                          uns32 global_hist) {
-  pref_stride_train(stride_prefetche_array.stride_hwp_ul1, lineAddr, loadPC, TRUE);
+  pref_stride_train(stride_prefetche_array.stride_hwp_ul1, lineAddr, loadPC,
+                    TRUE);
 }
 
 void pref_stride_ul1_miss(uns8 proc_id, Addr lineAddr, Addr loadPC,
                           uns32 global_hist) {
-  pref_stride_train(stride_prefetche_array.stride_hwp_ul1, lineAddr, loadPC, FALSE);
+  pref_stride_train(stride_prefetche_array.stride_hwp_ul1, lineAddr, loadPC,
+                    FALSE);
 }
 void pref_stride_umlc_hit(uns8 proc_id, Addr lineAddr, Addr loadPC,
-                         uns32 global_hist) {
-  pref_stride_train(stride_prefetche_array.stride_hwp_umlc, lineAddr, loadPC, TRUE);
+                          uns32 global_hist) {
+  pref_stride_train(stride_prefetche_array.stride_hwp_umlc, lineAddr, loadPC,
+                    TRUE);
 }
 
 void pref_stride_umlc_miss(uns8 proc_id, Addr lineAddr, Addr loadPC,
-                          uns32 global_hist) {
-  pref_stride_train(stride_prefetche_array.stride_hwp_umlc, lineAddr, loadPC, FALSE);
+                           uns32 global_hist) {
+  pref_stride_train(stride_prefetche_array.stride_hwp_umlc, lineAddr, loadPC,
+                    FALSE);
 }
-void pref_stride_train(Pref_Stride* stride_hwp, Addr lineAddr, Addr loadPC, Flag is_hit) {
+void pref_stride_train(Pref_Stride* stride_hwp, Addr lineAddr, Addr loadPC,
+                       Flag is_hit) {
   int ii;
   int region_idx = -1;
 
@@ -177,8 +183,8 @@ void pref_stride_train(Pref_Stride* stride_hwp, Addr lineAddr, Addr loadPC, Flag
           if(entry->num_states == 1) {
             entry->num_states = 2;
           }
-          entry->curr_state = (1 -
-                               entry->curr_state);  // change 0 to 1 or 1 to 0
+          entry->curr_state = (1 - entry->curr_state);  // change 0 to 1 or 1 to
+                                                        // 0
           if(entry->curr_state == 0) {
             entry->train_count_mode = TRUE;  // move into a checking mode
             entry->count            = 0;
@@ -199,7 +205,8 @@ void pref_stride_train(Pref_Stride* stride_hwp, Addr lineAddr, Addr loadPC, Flag
         entry->curr_state = (1 - entry->curr_state);
       } else {
         // does not match... lets reset.
-        pref_stride_create_newentry(stride_hwp, region_idx, lineAddr, index_tag);
+        pref_stride_create_newentry(stride_hwp, region_idx, lineAddr,
+                                    index_tag);
       }
     }
     if((entry->s_cnt[entry->curr_state] >= PREF_STRIDE_SINGLE_THRESH)) {
@@ -242,12 +249,15 @@ void pref_stride_train(Pref_Stride* stride_hwp, Addr lineAddr, Addr loadPC, Flag
           (ii < PREF_STRIDE_DEGREE && entry->pref_sent < PREF_STRIDE_DISTANCE);
           ii++, entry->pref_sent++) {
         pref_index = entry->pref_last_index + entry->stride[0];
-        if(stride_hwp->type == UMLC){if(!pref_addto_umlc_req_queue(0, pref_index,
+        if(stride_hwp->type == UMLC) {
+          if(!pref_addto_umlc_req_queue(0, pref_index,
+                                        stride_hwp->hwp_info->id))  // FIXME
+            break;
+        } else {
+          if(!pref_addto_ul1req_queue(0, pref_index,
                                       stride_hwp->hwp_info->id))  // FIXME
-            break;}
-          else {if(!pref_addto_ul1req_queue(0, pref_index,
-                                      stride_hwp->hwp_info->id))  // FIXME
-            break;  }                                                 // q is full
+            break;
+        }  // q is full
         entry->pref_last_index = pref_index;
       }
     } else if((stride == entry->stride[entry->curr_state] &&
@@ -268,23 +278,29 @@ void pref_stride_train(Pref_Stride* stride_hwp, Addr lineAddr, Addr loadPC, Flag
         if(entry->pref_count == entry->s_cnt[entry->pref_curr_state]) {
           pref_index = entry->pref_last_index +
                        entry->strans[entry->pref_curr_state];
-          if(stride_hwp->type == UMLC){if(!pref_addto_umlc_req_queue(0, pref_index,
-                                      stride_hwp->hwp_info->id))  // FIXME
-            break;}
-          else {if(!pref_addto_ul1req_queue(0, pref_index,
-                                      stride_hwp->hwp_info->id))  // FIXME
-            break;  }                                              // q is full
+          if(stride_hwp->type == UMLC) {
+            if(!pref_addto_umlc_req_queue(0, pref_index,
+                                          stride_hwp->hwp_info->id))  // FIXME
+              break;
+          } else {
+            if(!pref_addto_ul1req_queue(0, pref_index,
+                                        stride_hwp->hwp_info->id))  // FIXME
+              break;
+          }  // q is full
           entry->pref_count      = 0;
           entry->pref_curr_state = (1 - entry->pref_curr_state);
         } else {
           pref_index = entry->pref_last_index +
                        entry->stride[entry->pref_curr_state];
-          if(stride_hwp->type == UMLC){if(!pref_addto_umlc_req_queue(0, pref_index,
-                                      stride_hwp->hwp_info->id))  // FIXME
-            break;}
-          else {if(!pref_addto_ul1req_queue(0, pref_index,
-                                      stride_hwp->hwp_info->id))  // FIXME
-            break;  }                                                 // q is full
+          if(stride_hwp->type == UMLC) {
+            if(!pref_addto_umlc_req_queue(0, pref_index,
+                                          stride_hwp->hwp_info->id))  // FIXME
+              break;
+          } else {
+            if(!pref_addto_ul1req_queue(0, pref_index,
+                                        stride_hwp->hwp_info->id))  // FIXME
+              break;
+          }  // q is full
           entry->pref_count++;
         }
         entry->pref_last_index = pref_index;
@@ -309,7 +325,8 @@ void pref_stride_train(Pref_Stride* stride_hwp, Addr lineAddr, Addr loadPC, Flag
   }
 }
 
-void pref_stride_create_newentry(Pref_Stride* stride_hwp, int idx, Addr line_addr, Addr region_tag) {
+void pref_stride_create_newentry(Pref_Stride* stride_hwp, int idx,
+                                 Addr line_addr, Addr region_tag) {
   stride_hwp->region_table[idx].tag         = region_tag;
   stride_hwp->region_table[idx].valid       = TRUE;
   stride_hwp->region_table[idx].last_access = cycle_count;

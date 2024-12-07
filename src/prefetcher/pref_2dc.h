@@ -57,7 +57,7 @@ typedef struct Pref_2DC_Struct {
   CacheLevel        type;
 } Pref_2DC;
 
-typedef struct{
+typedef struct {
   Pref_2DC* tdc_hwp_umlc;
   Pref_2DC* tdc_hwp_ul1;
 } tdc_prefetchers;
@@ -71,9 +71,9 @@ void pref_2dc_ul1_miss(uns8 proc_id, Addr lineAddr, Addr loadPC,
 void pref_2dc_ul1_prefhit(uns8 proc_id, Addr lineAddr, Addr loadPC,
                           uns32 global_hist);
 void pref_2dc_umlc_miss(uns8 proc_id, Addr lineAddr, Addr loadPC,
-                       uns32 global_hist);
+                        uns32 global_hist);
 void pref_2dc_umlc_prefhit(uns8 proc_id, Addr lineAddr, Addr loadPC,
-                          uns32 global_hist);
+                           uns32 global_hist);
 /*************************************************************/
 /* Internal Function */
 void init_2dc(HWP* hwp, Pref_2DC* tdc_hwp_core);
@@ -82,6 +82,7 @@ void pref_2dc_train(Pref_2DC* tdc_hwp, Addr lineAddr, Addr loadPC, Flag is_hit);
 /*************************************************************/
 /* Misc functions */
 void pref_2dc_throttle(Pref_2DC* tdc_hwp);
-Addr pref_2dc_hash(Pref_2DC* tdc_hwp,Addr lineIndex, Addr loadPC, int deltaA, int deltaB);
+Addr pref_2dc_hash(Pref_2DC* tdc_hwp, Addr lineIndex, Addr loadPC, int deltaA,
+                   int deltaB);
 
 #endif /*  __PREF_2DC_H__*/

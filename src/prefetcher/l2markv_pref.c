@@ -325,7 +325,7 @@ void update_l2markv_pref_req_queue(void) {
         buffer_empty = TRUE;  // if timer is set
     } else
       buffer_empty = TRUE;  // if valid
-  }                         // end while
+  }  // end while
 
   for(ii = 0; ii < L1MARKV_PREF_SEND_QUEUE; ii++) {
     uns q_index = markv_l2access_send_no % MARKV_L2ACCESS_REQ_Q_SIZE;

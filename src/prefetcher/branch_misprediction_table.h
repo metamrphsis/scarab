@@ -2,9 +2,9 @@
  * File         : branch_misprediction_table.h
  * Author       : Peter Braun
  * Date         : 10.28.2020
- * Description  : Store branch count and branch misprediction count for each branch.
- *                Used to identify candidates for dual path prefetching into the uop cache.
- *                8-way set associative.
+ * Description  : Store branch count and branch misprediction count for each
+ *branch. Used to identify candidates for dual path prefetching into the uop
+ *cache. 8-way set associative.
  ***************************************************************************************/
 
 #ifndef __BRANCH_MISPREDICTION_TABLE_H__

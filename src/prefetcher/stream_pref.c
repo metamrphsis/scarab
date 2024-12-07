@@ -96,6 +96,8 @@ static int train_l2hit_filter_no;
 static int l2hit_l2access_req_no;
 static int l2hit_l2access_send_no;
 
+Best_Offset_Prefetcher bop;
+
 void init_stream_HWP(void) {
   stream_hwp         = (Stream_HWP*)malloc(sizeof(Stream_HWP));
   stream_hwp->stream = (Stream_Buffer*)calloc(STREAM_BUFFER_N,
@@ -113,6 +115,72 @@ void init_stream_HWP(void) {
     stream_hwp->l2hit_l2send_req_queue = (Pref_Mem_Req*)calloc(
       L2HIT_L2ACCESS_REQ_Q_SIZE, sizeof(Pref_Mem_Req));
     train_l2hit_filter = (Addr*)calloc(TRAIN_FILTER_SIZE, sizeof(Addr));
+  }
+}
+
+// Initialize the Best-Offset Prefetcher
+void init_best_offset_prefetcher(struct HWP_struct* hwp) {
+  bop.current_offset = 1;
+  bop.best_score     = 0;
+  bop.best_offset    = 1;
+  bop.round_count    = 0;
+  for(int i = 0; i < 52; i++) {
+    bop.scores[i] = 0;
+  }
+  for(int i = 0; i < 256; i++) {
+    bop.rr_table[i] = -1;
+    bop.rr_tags[i]  = -1;
+  }
+}
+
+// Update the Best-Offset Prefetcher with a new memory access
+void update_best_offset_prefetcher(Best_Offset_Prefetcher* bop,
+                                   Addr                    line_addr) {
+  int index = line_addr % 256;
+  int tag   = (line_addr >> 8) & 0xFFF;
+
+  // Check if the current address hits in the RR table
+  if(bop->rr_tags[index] == tag) {
+    bop->scores[bop->current_offset]++;
+  }
+
+  // Update the RR table
+  bop->rr_table[index] = line_addr;
+  bop->rr_tags[index]  = tag;
+
+  // Update the best offset if necessary
+  if(bop->scores[bop->current_offset] > bop->best_score) {
+    bop->best_score  = bop->scores[bop->current_offset];
+    bop->best_offset = bop->current_offset;
+  }
+
+  // Move to the next offset after a certain number of accesses
+  bop->round_count++;
+  if(bop->round_count >= 100) {
+    bop->current_offset = (bop->current_offset + 1) % 52;
+    bop->round_count    = 0;
+  }
+}
+
+// Perform a prefetch based on the Best-Offset Prefetcher
+void best_offset_prefetch(Best_Offset_Prefetcher* bop, Addr line_addr) {
+  Addr prefetch_addr = line_addr + bop->best_offset;
+
+  // Check if the prefetch address is valid and within the same page
+  if((prefetch_addr >> LOG2(DCACHE_LINE_SIZE)) !=
+     (line_addr >> LOG2(DCACHE_LINE_SIZE))) {
+    return;
+  }
+
+  // Issue a prefetch request for prefetch_addr
+  uns proc_id = get_proc_id_from_cmp_addr(line_addr);
+  if(new_mem_req(MRT_DPRF, proc_id, prefetch_addr, L1_LINE_SIZE, 1, NULL,
+                 dcache_fill_line, unique_count, 0)) {
+    DEBUG(proc_id, "[PREFETCH] line_addr: 0x%s prefetch_addr: 0x%s\n",
+          hexstr64(line_addr), hexstr64(prefetch_addr));
+    STAT_EVENT(proc_id, BEST_OFFSET_PREFETCH_ISSUED);
+  } else {
+    STAT_EVENT(proc_id, BEST_OFFSET_PREFETCH_FAILED);
   }
 }
 
@@ -139,8 +207,8 @@ void stream_dl0_miss(Addr line_addr) /* line_addr: the first address of the
                                                              // also? -
                                                              // confusing...
 
-    if(hit_index ==
-       -1) /* we do not have a trained buffer, nor did we create it */
+    if(hit_index == -1) /* we do not have a trained buffer, nor did we create it
+                         */
       return;
 
     addto_train_stream_filter(line_index);
@@ -213,6 +281,15 @@ void stream_dl0_miss(Addr line_addr) /* line_addr: the first address of the
     } else
       STAT_EVENT(proc_id, MISS_TRAIN_STREAM);
   }
+
+  // Integrate Best-Offset Prefetcher
+  static int initialized = 0;
+  if(!initialized) {
+    init_best_offset_prefetcher(NULL);
+    initialized = 1;
+  }
+  update_best_offset_prefetcher(&bop, line_addr);
+  best_offset_prefetch(&bop, line_addr);
 }
 
 
@@ -501,10 +578,10 @@ int train_create_stream_buffer(uns proc_id, Addr line_index, Flag train,
               dir = 1;
             stream_hwp->stream[ii].trained = TRUE;
             stream_hwp->stream[ii].ep      = (dir > 0) ?
-                                          line_index + STREAM_START_DIS :
-                                          line_index -
+                                               line_index + STREAM_START_DIS :
+                                               line_index -
                                             STREAM_START_DIS;  // BUG 57
-            stream_hwp->stream[ii].dir = dir;
+            stream_hwp->stream[ii].dir     = dir;
             DEBUG(proc_id,
                   "stream  trained stream_index:%3d sp %7s ep %7s dir %2d "
                   "miss_index %7d\n",
@@ -734,10 +811,10 @@ int train_l2hit_stream_buffer(Addr line_index, Flag hit) {
           dir = 1;
         stream_hwp->l2hit_stream[ii].trained = TRUE;
         stream_hwp->l2hit_stream[ii].ep      = (dir > 0) ?
-                                            line_index +
+                                                 line_index +
                                               L2HIT_STREAM_START_DIS :
-                                            line_index - L2HIT_STREAM_START_DIS;
-        stream_hwp->l2hit_stream[ii].dir = dir;
+                                                 line_index - L2HIT_STREAM_START_DIS;
+        stream_hwp->l2hit_stream[ii].dir     = dir;
         DEBUG(0,
               "[l2HITP**%s**]stream  trained stream_index:%3d sp 0x%7s ep "
               "0x%7s dir %2d miss_index %7s\n",
